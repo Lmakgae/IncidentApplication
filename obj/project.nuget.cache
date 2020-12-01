@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "xiprvma5g6v0HPq4TyJ/bVDkUMGF2cAyiNgYv+O3Wuq9DPeScAizxta0fVH+aKc3EZMkH/oPgusMZBKx/hJy2w==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\User\\Desktop\\Incident App\\Incident Application\\Incident Application.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\User\\.nuget\\packages\\npgsql\\5.0.0\\npgsql.5.0.0.nupkg.sha512",
+    "C:\\Users\\User\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\4.6.0\\system.runtime.compilerservices.unsafe.4.6.0.nupkg.sha512"
+  ],
+  "logs": []
+}
