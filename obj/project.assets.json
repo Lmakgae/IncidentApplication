@@ -83,11 +83,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\User\\Desktop\\Incident App\\Incident Application\\Incident Application.csproj",
+      "projectUniqueName": "C:\\Users\\User\\Documents\\IncidentApplication\\incidentapplication\\Incident Application.csproj",
       "projectName": "Incident Application",
-      "projectPath": "C:\\Users\\User\\Desktop\\Incident App\\Incident Application\\Incident Application.csproj",
+      "projectPath": "C:\\Users\\User\\Documents\\IncidentApplication\\incidentapplication\\Incident Application.csproj",
       "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\User\\Desktop\\Incident App\\Incident Application\\obj\\",
+      "outputPath": "C:\\Users\\User\\Documents\\IncidentApplication\\incidentapplication\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
