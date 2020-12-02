@@ -357,6 +357,7 @@ namespace IncidentApp
                     case ConsoleKey.Enter:
                     case ConsoleKey.Spacebar:
                         selectTechnicianMenu(list[option]);
+                        showMenu = false;
                         break;
                     case ConsoleKey.Escape:
                         Console.Clear();
@@ -628,6 +629,7 @@ namespace IncidentApp
                         if (list.Count > 0) {
                             showMenu = technicianAssigned(incident, list[option]);
                         }
+                        showMenu = false;
                         break;
                     case ConsoleKey.Escape:
                         Console.Clear();
@@ -840,12 +842,11 @@ namespace IncidentApp
             string date = fileDate.ToString("yyyy_MM_dd_HH_mm_ss");
             string dateCons = "General_report_" + date;
 
-            string filePath = @"C:\Users\User\Documents\Incident App\Generated Reports\General Report - " + dateCons + ".txt";
+            string filePath = @"C:\Users\User\Documents\Incident App\Generated Reports\" + dateCons + ".txt";
 
             if(!Directory.Exists(filePath)) {
                 Directory.CreateDirectory(@"C:\Users\User\Documents\Incident App\Generated Reports");
             }
-
 
 
             bool showMenu = true;
@@ -934,64 +935,62 @@ namespace IncidentApp
                                 {
                                     using (StreamWriter sw = File.CreateText(filePath))
                                     {
-                                        sw.WriteLine("\t \t \t \t \t \t All Incidents Reported");
+                                        sw.WriteLine("\t \t \t \t \t \t Filtered Incidents");
                                         sw.WriteLine();
-                                        sw.WriteLine("====================================================================================================================");
-                                        sw.WriteLine("{0,-4} {1,-30} {2,-30} {3,-20} {4,-10} {5,-8} {6,-8} ", "ID", "Location", "Description", "Date", "Status", "User", "Tech ID");
-                                        sw.WriteLine("====================================================================================================================");
+                                        sw.WriteLine("================================================================================================================================================");
+                                        sw.WriteLine("{0,-4} {1,-30} {2,-30} {3,-20} {4,-10} {5,-20} {6,-20} ", "ID", "Location", "Description", "Date", "Status", "User ID", "Tech ID");
+                                        sw.WriteLine("================================================================================================================================================");
+                                        string status = "";
                                         foreach (Incident reportedIncident in list)
-                                        {   
-                                            string status = "";
-                                            switch( reportedIncident.Status) {
+                                        {
+                                            switch (reportedIncident.Status)
+                                            {
                                                 case (int)IncidentStatus.Open:
                                                     status = "Open";
                                                     break;
+                                                case (int)IncidentStatus.Accepted:
+                                                    status = "Accepoted";
+                                                    break;
+                                                case (int)IncidentStatus.Rejected:
+                                                    status = "Rejected";
+                                                    break;
                                                 case (int)IncidentStatus.Escalated:
                                                     status = "Escalated";
-                                                    break;    
+                                                    break;
+                                                case (int)IncidentStatus.Closed:
+                                                    status = "Closed";
+                                                    break;
                                             }
-
-                                            if (reportedIncident.Technician == null) {
-                                                sw.WriteLine("{0,-4} {1,-30} {2,-30} {3,-20} {4,-10} {5,-8} {6,-8} ", 
-                                                                                        reportedIncident.IncidentID, 
-                                                                                        reportedIncident.Location, 
-                                                                                        reportedIncident.Description, 
-                                                                                        reportedIncident.Date_Logged, 
-                                                                                        status, 
-                                                                                        reportedIncident.user.first_name + " " + reportedIncident.user.last_name , 
-                                                                                        "Not Assigned");
-                                            } else {
-                                                sw.WriteLine("{0,-4} {1,-30} {2,-30} {3,-20} {4,-10} {5,-8} {6,-8} ", 
-                                                                                        reportedIncident.IncidentID, 
-                                                                                        reportedIncident.Location, 
-                                                                                        reportedIncident.Description, 
-                                                                                        reportedIncident.Date_Logged, 
-                                                                                        status, 
-                                                                                        reportedIncident.user.first_name + " " + reportedIncident.user.last_name , 
-                                                                                        reportedIncident.Technician.first_name + " " + reportedIncident.Technician.last_name);
+                                            if (reportedIncident.Technician == null)
+                                            {
+                                                sw.WriteLine("{0,-4} {1,-30} {2,-30} {3,-20} {4,-10} {5,-20} {6,-20} ", reportedIncident.IncidentID, reportedIncident.Location, reportedIncident.Description, reportedIncident.Date_Logged, status, reportedIncident.user.first_name + " " + reportedIncident.user.last_name, "Not Assigned");
                                             }
-                                            
-
+                                            else
+                                            {
+                                                sw.WriteLine("{0,-4} {1,-30} {2,-30} {3,-20} {4,-10} {5,-20} {6,-20} ", reportedIncident.IncidentID, reportedIncident.Location, reportedIncident.Description, reportedIncident.Date_Logged, status, reportedIncident.user.first_name + " " + reportedIncident.user.last_name, reportedIncident.Technician.first_name + " " + reportedIncident.Technician.last_name);
+                                            }
                                         }
-                                        sw.WriteLine("====================================================================================================================");
-
-                                        if (Database.Instance.reportGenerated(Authenticate.Instance.User.User_ID, dateCons)) {
-                                            Console.ForegroundColor = ConsoleColor.Green;
-                                            Console.WriteLine("Report Saved!");
-                                            Console.WriteLine("\nPress any key to continue...");
-                                            Console.ReadKey(true);
-                                            Console.ResetColor();
-                                            showMenu = false;
-                                        } else {
-                                            Console.ForegroundColor = ConsoleColor.Red;
-                                            Console.WriteLine("Report could not be saved!");
-                                            Console.WriteLine("\nPress any key to continue...");
-                                            Console.ReadKey(true);
-                                            Console.ResetColor();
-                                            showMenu = false;
-                                        }
+                                        sw.WriteLine("================================================================================================================================================");
                                     }
                                 }
+                                try
+                                {
+                                    Database.Instance.reportGenerated(Authenticate.Instance.User.User_ID, dateCons);
+
+                                    Console.WriteLine();
+                                    Console.WriteLine("Report Saved!");
+                                    Console.WriteLine();
+                                    Console.WriteLine("Thank you. Have a nice day!");
+                                    Console.WriteLine();
+                                }
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine("Error retrieving data: " + e);
+                                }
+                                Console.WriteLine("**********************************************");
+                                Console.WriteLine("Press any key to continue...");
+                                Console.ReadKey(true);
+                                showMenu = false;
                                 break;
                             case 2:
                                 showMenu = false;
@@ -1469,7 +1468,13 @@ namespace IncidentApp
             DateTime fileDate = DateTime.Now;
             string date = fileDate.ToString("yyyy_MM_dd_HH_mm_ss");
             string dateCons = "General_report_" + date;
-            string filePath = @"C:\Users\User\Documents\Incident App\Generated Reports\General Report - " + dateCons + ".txt";
+
+            string filePath = @"C:\Users\User\Documents\Incident App\Generated Reports\" + dateCons + ".txt";
+
+            if (!Directory.Exists(filePath))
+            {
+                Directory.CreateDirectory(@"C:\Users\User\Documents\Incident App\Generated Reports");
+            }
             string year1;
             string year2;
             DateTime from;
@@ -1551,13 +1556,13 @@ namespace IncidentApp
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.Write("*  ");
-                    Console.WriteLine("Generate and Report\n");
+                    Console.WriteLine("Generate and Save Report\n");
                     Console.ResetColor();
                 }
                 else
                 {
                     Console.Write("   ");
-                    Console.WriteLine("Generate and Report\n");
+                    Console.WriteLine("Generate and Save Report\n");
                 }
                 if (option == 6)
                 {
@@ -1739,8 +1744,14 @@ namespace IncidentApp
                                                     status = "Closed";
                                                     break;
                                             }
-                                            sw.WriteLine("{0,-4} {1,-30} {2,-30} {3,-20} {4,-10} {5,-20} {6,-20} ", reportedIncident.IncidentID, reportedIncident.Location, reportedIncident.Description, reportedIncident.Date_Logged, status, reportedIncident.user.first_name + " " + reportedIncident.user.last_name, reportedIncident.Technician.first_name + " " + reportedIncident.Technician.last_name);
-
+                                            if(reportedIncident.Technician == null)
+                                            {
+                                                sw.WriteLine("{0,-4} {1,-30} {2,-30} {3,-20} {4,-10} {5,-20} {6,-20} ", reportedIncident.IncidentID, reportedIncident.Location, reportedIncident.Description, reportedIncident.Date_Logged, status, reportedIncident.user.first_name + " " + reportedIncident.user.last_name, "Not Assigned");
+                                            }
+                                            else
+                                            {
+                                                sw.WriteLine("{0,-4} {1,-30} {2,-30} {3,-20} {4,-10} {5,-20} {6,-20} ", reportedIncident.IncidentID, reportedIncident.Location, reportedIncident.Description, reportedIncident.Date_Logged, status, reportedIncident.user.first_name + " " + reportedIncident.user.last_name, reportedIncident.Technician.first_name + " " + reportedIncident.Technician.last_name);
+                                            }
                                         }
                                         sw.WriteLine("================================================================================================================================================");
                                     }
@@ -1942,4 +1953,5 @@ namespace IncidentApp
             return statusId;
         }
     }
+
 }

@@ -26,7 +26,7 @@ namespace IncidentApp
         /// </summary>
         /// <returns>A formatted connection string</returns>
         private string connectionString() {
-            return string.Format("host={0};port={1};database={2};username={3}; password={4};", "localhost", "5432", "IncidentDb", "postgres", "mary19991011-");
+            return string.Format("Host={0};Port={1};Username={2};Password={3};Database={4};", "localhost", "5432", "postgres", "@Kevin985", "IncidentDB");
         }
 
         public User Login(String email, String password) {
