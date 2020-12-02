@@ -43,17 +43,25 @@ namespace IncidentApp
         {
             try{
                 return new System.Net.Mail.MailAddress(email).Address == email;
-            }catch{
+            }catch(Exception ex){
                 return false;
             }
         }
-        public static bool isPhoneNumber(string number)  //Fuction that will check if users enters a valid 10 digits phone number
+        private static bool isDigit(string input)
         {
-            try{
-                return new System.Text.RegularExpressions.Regex(@"^[0-9]{10}$").IsMatch(number);
-            }catch{
-                return false;
-            }  
+            foreach (char n in input)
+            {
+                if (n < '0' || n > '9')
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        public static bool isPhoneNumber(string number)
+        {
+            return number[0] == '0' && (number[1] == '7' || number[1] == '8' || number[1] == '6') && isDigit(number);
         }
         public static bool passwordMeetsCriteria(string password)  //Function that will check if the users enters a valid password that matches all characters required by a password
         {

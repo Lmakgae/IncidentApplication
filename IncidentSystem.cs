@@ -32,9 +32,8 @@ namespace IncidentApp
             } else {
                 try
                 {
-                    // Set timer to 60 seconds
-                    // TODO: Change the interval
-                    timer = new System.Timers.Timer(1000 * 60); // 60 minutes/ 1 hour interval
+                    // Set timer to 60 minutes
+                    timer = new System.Timers.Timer(1000 * 60 * 60); // 60 minutes/ 1 hour interval
                     timer.Enabled = true;
                     // Execute the "EscalationTimerFired" on another thread
                     timer.Elapsed += delegate { EscalationTimerFired(incident_id); };
