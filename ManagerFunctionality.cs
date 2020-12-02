@@ -13,7 +13,7 @@ namespace IncidentApp
             while (showMenu)
             {
                 Console.Clear();
-                Console.WriteLine("Welcome to the GIJIMA Incident App, " + Authenticate.Instance.User.first_name + "\n");
+                //Console.WriteLine("Welcome to the GIJIMA Incident App, " + Authenticate.Instance.User.first_name + "\n");
                 Console.WriteLine("Use Up arrow and Down arrow to move, enter/spacebar to select");
                 if (option == 1)
                 {
@@ -75,9 +75,11 @@ namespace IncidentApp
                         switch (option)
                         {
                             case 1:
+                                //IncidentServices.GetIncidents();
                                 ManageIncidentsMenu();
                                 break;
                             case 2:
+                                //UserServices.getUsers();
                                 ManageUsersMenu();
                                 break;
                             case 3:
@@ -182,7 +184,7 @@ namespace IncidentApp
                             case 2:
                                 Console.Clear();
                                 Console.WriteLine("Apply filters: ");
-                                // IncidentServices.CreateFilteredReport();
+                                filterIncidentsMenu();
                                 Console.WriteLine();
                                 Console.ReadKey(true);
                                 break;
@@ -407,6 +409,69 @@ namespace IncidentApp
             
         }
 
+        public static void displayIncidents(List<Incident> incidents)
+        {
+            if(incidents.Count != 0)
+            {
+                Console.WriteLine("================================================================================================================================================");
+                Console.WriteLine("\t \t \t \t \t \t Reported Incidents");
+                Console.WriteLine("===========================================================================================================================================");
+                Console.WriteLine("{0,-4} {1,-30} {2,-30} {3,-20} {4,-10} {5,-20} {6,-20} ", "ID", "Location", "Description", "Date", "Status", "User", "Technician");
+                Console.WriteLine("===========================================================================================================================================");
+                string status = "";
+
+                foreach (Incident incident in incidents)
+                {
+                    switch (incident.Status)
+                    {
+                        case (int)IncidentStatus.Open:
+                            status = "Open";
+                            break;
+                        case (int)IncidentStatus.Accepted:
+                            status = "Accepoted";
+                            break;
+                        case (int)IncidentStatus.Rejected:
+                            status = "Rejected";
+                            break;
+                        case (int)IncidentStatus.Escalated:
+                            status = "Escalated";
+                            break;
+                        case (int)IncidentStatus.Closed:
+                            status = "Closed";
+                            break;
+                    }
+                    if (incident.Technician == null)
+                    {
+                        Console.WriteLine("{0,-4} {1,-30} {2,-30} {3,-20} {4,-10} {5,-20} {6,-20} ", incident.IncidentID,
+                            incident.Location,
+                            incident.Description,
+                            incident.Date_Logged,
+                            status,
+                            incident.user.first_name + " " + incident.user.last_name,
+                            "Not Assigned");
+                    }
+                    else
+                    {
+                        Console.WriteLine("{0,-4} {1,-30} {2,-30} {3,-20} {4,-10} {5,-20} {6,-20} ",
+                                                                                                    incident.IncidentID,
+                                                                                                    incident.Location,
+                                                                                                    incident.Description,
+                                                                                                    incident.Date_Logged,
+                                                                                                    status,
+                                                                                                    incident.user.first_name + " " + incident.user.last_name,
+                                                                                                    incident.Technician.first_name + " " + incident.Technician.last_name);
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("No Incidents Match those filters");
+                Console.WriteLine();
+            }
+        }
+
         public static void displayIncident(Incident incident) {
             
             string status = "";
@@ -440,6 +505,15 @@ namespace IncidentApp
             }
 
             
+        }
+
+        public static void displayUsers(List<User> users)
+        {
+            foreach(var user in users)
+            {
+                Console.WriteLine("{0, -8} {1,-15} {2,-15} {3,-20} {4,-13}", user.User_ID, user.first_name, user.last_name, user.email, user.cellphone_number);
+
+            }
         }
 
         public static void displayIncidentInDetail(Incident incident) {
@@ -571,6 +645,127 @@ namespace IncidentApp
 
         }
 
+        public static User  selectTechnicianMenu(List<Incident> incidents)
+        {
+            List<User> list = Database.Instance.GetAllTechnicians();
+            bool showMenu = true;
+            int pages = (list.Count / 5);
+            int last_page = list.Count % 5;
+            int option = 0;
+            int current_page = 0;
+            while (showMenu)
+            {
+                Console.Clear();
+                Console.WriteLine("\n\t \t \t \t \t Incidents");
+                Console.WriteLine();
+
+                displayIncidents(incidents);
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("\nUse Up arrow and Down arrow to move, Left and Right arrow to switch page, enter/spacebar to select, Esc/Escape to go back.");
+                if (current_page == pages)
+                {
+                    Console.WriteLine("\n\t \t \t \t \t All Available Technicians");
+                    Console.WriteLine();
+                    Console.WriteLine("====================================================================================================================");
+                    Console.WriteLine("{0,-4} {1,-4} {2,-30} {3,-30} {4,-20} {5,-10} ", "", "ID", "First Name", "Last Name", "Email", "Cellphone no");
+                    Console.WriteLine("====================================================================================================================");
+                    for (int i = (current_page * 5); i < ((current_page * 5) + last_page); i++)
+                    {
+                        displayTechnician(list[i], option, i);
+                    }
+                    if (list.Count == 0)
+                    {
+                        Console.WriteLine("\t \t \t \t \t No Available Technicians");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("\n\t \t \t \t \t All Incidents Reported");
+                    Console.WriteLine();
+                    Console.WriteLine("====================================================================================================================");
+                    Console.WriteLine("{0,-4} {1,-4} {2,-30} {3,-30} {4,-20} {5,-10} ", "", "ID", "First Name", "Last Name", "Email", "Cellphone no");
+                    Console.WriteLine("====================================================================================================================");
+                    for (int i = (current_page * 5); i < ((current_page * 5) + 5); i++)
+                    {
+                        displayTechnician(list[i], option, i);
+                    }
+                    if (list.Count == 0)
+                    {
+                        Console.WriteLine("\t \t \t \t \t No Available Technicians");
+                    }
+                }
+
+                Console.WriteLine("\nPage: " + (current_page + 1) + " of " + (pages + 1));
+
+                switch (Console.ReadKey().Key)
+                {
+                    case ConsoleKey.UpArrow:
+
+                        if ((option > (current_page * 5)))
+                        {
+                            option--;
+                        }
+                        Console.Clear();
+                        break;
+                    case ConsoleKey.DownArrow:
+
+                        if (current_page == pages)
+                        {
+                            if ((option < (last_page - 1)))
+                            {
+                                option++;
+                            }
+                        }
+                        else
+                        {
+                            if ((option < ((current_page * 5) + 4)))
+                            {
+                                option++;
+                            }
+                        }
+
+                        Console.Clear();
+                        break;
+                    case ConsoleKey.LeftArrow:
+                        if (current_page != 0)
+                        {
+                            current_page--;
+                            option = (current_page * 5);
+                        }
+                        break;
+                    case ConsoleKey.RightArrow:
+                        if (current_page != pages)
+                        {
+                            current_page++;
+                            option = (current_page * 5);
+                        }
+                        break;
+                    case ConsoleKey.Enter:
+                    case ConsoleKey.Spacebar:
+                        if (list.Count > 0)
+                        {
+                            //showMenu = technicianAssigned(incident, list[option]);
+                            return list[option];
+                        }
+                        break;
+                    case ConsoleKey.Escape:
+                        Console.Clear();
+                        showMenu = false;
+                        break;
+                    default:
+                        Console.WriteLine("\nInvalid key, use Up/Down arrow to move, enter/spacebar to select");
+                        Console.WriteLine("Press any key to continue...");
+                        Console.ReadKey(true);
+                        break;
+                }
+            }
+
+            return list[option];
+
+        }
+
         public static void displayTechnician(User user, int option, int index) {
 
             if (option == index) {
@@ -593,7 +788,7 @@ namespace IncidentApp
 
             
         }
-        
+
         public static Boolean technicianAssigned(Incident incident, User user) {
             Console.WriteLine();
             Console.WriteLine("=================================================================");
@@ -637,7 +832,6 @@ namespace IncidentApp
             }
             return true;
         }
-
 
         public static void GeneralReport()
         {
@@ -908,6 +1102,114 @@ namespace IncidentApp
 
         }
 
+        public static User selectUser(List<Incident> incidentList)
+        {
+            List<User> list = Database.Instance.GetAllUsers();
+            bool showMenu = true;
+            int pages = (list.Count / 5);
+            int last_page = list.Count % 5;
+            int option = 0;
+            int current_page = 0;
+            while (showMenu)
+            {
+                Console.Clear();
+                Console.WriteLine("\n\t \t \t \t \t Incidents");
+                displayIncidents(incidentList);
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("Use Up arrow and Down arrow to move, Left and Right arrow to switch page, enter/spacebar to select, esc/escape to go back");
+                if (current_page == pages)
+                {
+                    Console.WriteLine("\n\t \t \t \t \t All Users");
+                    Console.WriteLine();
+                    Console.WriteLine("====================================================================================================================");
+                    Console.WriteLine("{0,-4} {1,-4} {2,-30} {3,-30} {4,-20} {5,-10} ", "", "ID", "First Name", "Last Name", "Email", "Cellphone no");
+                    Console.WriteLine("====================================================================================================================");
+                    for (int i = (current_page * 5); i < ((current_page * 5) + last_page); i++)
+                    {
+                        displayTechnician(list[i], option, i);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("\n\t \t \t \t \t All Users");
+                    Console.WriteLine();
+                    Console.WriteLine("====================================================================================================================");
+                    Console.WriteLine("{0,-4} {1,-4} {2,-30} {3,-30} {4,-20} {5,-10} ", "", "ID", "First Name", "Last Name", "Email", "Cellphone no");
+                    Console.WriteLine("====================================================================================================================");
+                    for (int i = (current_page * 5); i < ((current_page * 5) + 5); i++)
+                    {
+                        displayTechnician(list[i], option, i);
+                    }
+                }
+
+                Console.WriteLine("\nPage: " + (current_page + 1) + " of " + (pages + 1));
+
+                switch (Console.ReadKey().Key)
+                {
+                    case ConsoleKey.UpArrow:
+
+                        if ((option > (current_page * 5)))
+                        {
+                            option--;
+                        }
+                        Console.Clear();
+                        break;
+                    case ConsoleKey.DownArrow:
+
+                        if (current_page == pages)
+                        {
+                            if ((option < (last_page - 1)))
+                            {
+                                option++;
+                            }
+                        }
+                        else
+                        {
+                            if ((option < ((current_page * 5) + 4)))
+                            {
+                                option++;
+                            }
+                        }
+
+                        Console.Clear();
+                        break;
+                    case ConsoleKey.LeftArrow:
+                        if (current_page != 0)
+                        {
+                            current_page--;
+                            option = (current_page * 5);
+                        }
+                        break;
+                    case ConsoleKey.RightArrow:
+                        if (current_page != pages)
+                        {
+                            current_page++;
+                            option = (current_page * 5);
+                        }
+                        break;
+                    case ConsoleKey.Enter:
+                    case ConsoleKey.Spacebar:
+                        return list[option];
+                        Console.WriteLine("**********************************************");
+                        Console.WriteLine("Press any key to continue...");
+                        Console.ReadKey(true);
+                        break;
+                    case ConsoleKey.Escape:
+                        Console.Clear();
+                        showMenu = false;
+                        break;
+                    default:
+                        Console.WriteLine("\nInvalid key, use Up/Down arrow to move, enter/spacebar to select");
+                        Console.WriteLine("Press any key to continue...");
+                        Console.ReadKey(true);
+                        break;
+                }
+            }
+            return list[option];
+        }
+
         public static User selectUserMenu(User user)//A method that allow the user to update their inforomation
         {
             string firstName = "";
@@ -1162,10 +1464,482 @@ namespace IncidentApp
             return user;
         }
 
+        public static void filterIncidentsMenu()//A method that allow the user to update their inforomation
+        {
+            DateTime fileDate = DateTime.Now;
+            string date = fileDate.ToString("yyyy_MM_dd_HH_mm_ss");
+            string dateCons = "General_report_" + date;
+            string filePath = @"C:\Users\User\Documents\Incident App\Generated Reports\General Report - " + dateCons + ".txt";
+            string year1;
+            string year2;
+            DateTime from;
+            DateTime to;
+            List<Incident> FilteredIncidents = Database.Instance.GetAllIncidents();
+            bool showMenu = true;
+            int option = 1;
+            //This is a menu that shows what information the user wants to change, i.e. the First Name, Last Name, Email.
+            while (showMenu)
+            {
+                if(FilteredIncidents.Count == 0)
+                {
 
+                    Console.WriteLine();
+                    Console.WriteLine("No Incidents");
+                    Console.WriteLine("Reseting List");
+                    FilteredIncidents = Database.Instance.GetAllIncidents();
+                }
+                else
+                {
+                    displayIncidents(FilteredIncidents);
+                }
+                
+                Console.WriteLine();
+                Console.WriteLine();
+                //Filter by Date
+                if (option == 1)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("*  ");
+                    Console.Write("Filter by Date\n");
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.Write("   ");
+                    Console.Write("Filter by Date\n");
+                }
+                //Filter by Technician
+                if (option == 2)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("*  ");
+                    Console.Write("Filter by Technician\n");
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.Write("   ");
+                    Console.Write("Filter by Technician\n");
+                }
+                //Filter by User
+                //Filter by Status
+                if (option == 3)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("*  ");
+                    Console.Write("Filter by Status\n");
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.Write("   ");
+                    Console.Write("Filter by Status\n");
+                }
+                if (option == 4)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("*  ");
+                    Console.Write("Filter by User\n");
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.Write("   ");
+                    Console.Write("Filter by User\n");
+                }
+                if (option == 5)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("*  ");
+                    Console.WriteLine("Generate and Report\n");
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.Write("   ");
+                    Console.WriteLine("Generate and Report\n");
+                }
+                if (option == 6)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("*  ");
+                    Console.WriteLine("Top menu\n");
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.Write("   ");
+                    Console.WriteLine("Top menu\n");
+                }
+
+                switch (Console.ReadKey().Key)
+                {
+                    case ConsoleKey.UpArrow:
+
+                        if (option != 1)
+                        {
+                            option--;
+                        }
+                        Console.Clear();
+                        break;
+                    case ConsoleKey.DownArrow:
+                        if (option != 7)
+                        {
+                            option++;
+                        }
+                        Console.Clear();
+                        break;
+                    case ConsoleKey.Enter:
+                    case ConsoleKey.Spacebar:
+                        Console.Clear();
+                        //The options which allow the user to change/update their information
+                        switch (option)
+                        {
+                            //Update their First Name
+                            case 1:
+                               
+                                if(FilteredIncidents.Count != 0)
+                                {
+                                    displayIncidents(FilteredIncidents);
+                                beginningDate:
+                                    Console.WriteLine();
+
+                                    Console.ForegroundColor = ConsoleColor.Green;
+                                    Console.Write("From: Enter Year starting date range [format : YYYY/MM/dd] : ");
+                                    Console.ResetColor();
+                                    year1 = Console.ReadLine();
+                                    try
+                                    {
+                                        from = Convert.ToDateTime(year1);
+                                    }
+                                    catch
+                                    {
+                                        Console.ForegroundColor = ConsoleColor.Red;
+                                        Console.WriteLine("Date was in the wrong format");
+                                        Console.ResetColor();
+                                        goto beginningDate;
+                                    }
+                                endingDate:
+                                    Console.ForegroundColor = ConsoleColor.Green;
+                                    Console.Write("To: Enter the ending date range [format : YYYY/MM/dd] : ");
+                                    Console.ResetColor();
+                                    year2 = Console.ReadLine();
+                                    try
+                                    {
+                                        to = Convert.ToDateTime(year2);
+                                    }
+                                    catch
+                                    {
+                                        Console.ForegroundColor = ConsoleColor.Red;
+                                        Console.WriteLine("Date was in the wrong format");
+                                        Console.ResetColor();
+                                        goto endingDate;
+                                    }
+                                    FilteredIncidents = Database.Instance.GetIncidentsOnYearMonth(from, to);
+                                    Console.Clear();
+
+                                }
+                                else
+                                {
+                                    Console.WriteLine("No incidents found matching those filters");
+                                }
+                                Console.WriteLine("**********************************************");
+                                Console.WriteLine("Press any key to continue...");
+                                Console.ReadKey(true);
+                                break;
+                            case 2:
+                                
+                                displayIncidents(FilteredIncidents);
+                                Console.WriteLine();
+                                if(FilteredIncidents.Count != 0)
+                                {
+                                    List<Incident> dummie = new List<Incident>();
+                                    foreach (Incident incident in FilteredIncidents)
+                                    {
+                                        if (incident.Technician != null)
+                                        {
+                                            dummie.Add(incident);
+                                        }
+                                    }
+                                    int tech = selectTechnicianMenu(FilteredIncidents).User_ID;
+                                    FilteredIncidents = dummie.FindAll(x => x.Technician.User_ID == tech);
+                                }
+                                else
+                                {
+                                    Console.WriteLine("No incidents found matching those filters");
+                                }
+                                Console.Clear();
+                                Console.WriteLine("**********************************************");
+                                Console.WriteLine("Press any key to continue...");
+                                Console.ReadKey(true);
+                                break;
+                            case 3:
+                                Console.WriteLine();
+                                int statusFilter = selectStatus(FilteredIncidents);
+                                if (FilteredIncidents.Count != 0)
+                                {
+                                    FilteredIncidents = FilteredIncidents.FindAll(x => x.Status == statusFilter);
+                                }
+                                else
+                                {
+                                    Console.WriteLine("No incidents found matching those filters");
+                                }
+                                Console.Clear();
+                                Console.WriteLine("**********************************************");
+                                Console.WriteLine("Press any key to continue...");
+                                Console.ReadKey(true);
+                                break;
+                            //Updating the cellphone number    
+                            case 4:
+                                displayIncidents(FilteredIncidents);
+
+                                Console.WriteLine();
+                                if (FilteredIncidents.Count != 0)
+                                {
+                                    int user = selectUser(FilteredIncidents).User_ID;
+                                    FilteredIncidents = FilteredIncidents.FindAll(x => x.user.User_ID == user);
+                                }
+                                else
+                                {
+                                    Console.WriteLine("No incidents found matching those filters");
+                                }
+                                Console.Clear();
+                                Console.WriteLine("**********************************************");
+                                Console.WriteLine("Press any key to continue...");
+                                Console.ReadKey(true);
+                                break;
+                            case 5:
+                                if (!File.Exists(filePath))
+                                {
+                                    using (StreamWriter sw = File.CreateText(filePath))
+                                    {
+                                        sw.WriteLine("\t \t \t \t \t \t Filtered Incidents");
+                                        sw.WriteLine();
+                                        sw.WriteLine("================================================================================================================================================");
+                                        sw.WriteLine("{0,-4} {1,-30} {2,-30} {3,-20} {4,-10} {5,-20} {6,-20} ", "ID", "Location", "Description", "Date", "Status", "User ID", "Tech ID");
+                                        sw.WriteLine("================================================================================================================================================");
+                                        string status = "";
+                                        foreach (Incident reportedIncident in FilteredIncidents)
+                                        {
+                                            switch (reportedIncident.Status)
+                                            {
+                                                case (int)IncidentStatus.Open:
+                                                    status = "Open";
+                                                    break;
+                                                case (int)IncidentStatus.Accepted:
+                                                    status = "Accepoted";
+                                                    break;
+                                                case (int)IncidentStatus.Rejected:
+                                                    status = "Rejected";
+                                                    break;
+                                                case (int)IncidentStatus.Escalated:
+                                                    status = "Escalated";
+                                                    break;
+                                                case (int)IncidentStatus.Closed:
+                                                    status = "Closed";
+                                                    break;
+                                            }
+                                            sw.WriteLine("{0,-4} {1,-30} {2,-30} {3,-20} {4,-10} {5,-20} {6,-20} ", reportedIncident.IncidentID, reportedIncident.Location, reportedIncident.Description, reportedIncident.Date_Logged, status, reportedIncident.user.first_name + " " + reportedIncident.user.last_name, reportedIncident.Technician.first_name + " " + reportedIncident.Technician.last_name);
+
+                                        }
+                                        sw.WriteLine("================================================================================================================================================");
+                                    }
+                                }
+                                try
+                                {
+                                    Database.Instance.reportGenerated(Authenticate.Instance.User.User_ID, dateCons);
+
+                                    Console.WriteLine();
+                                    Console.WriteLine("Report Saved!");
+                                    Console.WriteLine();
+                                    Console.WriteLine("Thank you. Have a nice day!");
+                                    Console.WriteLine();
+                                }
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine("Error retrieving data: " + e);
+                                }
+                                Console.WriteLine("**********************************************");
+                                Console.WriteLine("Press any key to continue...");
+                                Console.ReadKey(true);
+                                showMenu = false;
+                                break;
+                            case 6:
+                                Console.WriteLine("\nExiting...");
+                                showMenu = false;
+                                break;
+                        }
+                        //If the user wants to continue or proceed with other tasks
+                        break;
+                    default:
+                        Console.WriteLine("\nInvalid key, use Up/Down arrow to move, enter/spacebar to select");
+                        Console.WriteLine("Press any key to continue...");
+                        Console.ReadKey(true);
+                        break;
+                }
+
+            }
+
+        }
+        public static int selectStatus(List<Incident> incidents)
+        {
+            int statusId = 0;
+            bool showMenu = true;
+            int option = 1;
+            while (showMenu)
+            {
+                if (incidents.Count == 0)
+                {
+
+                    Console.WriteLine();
+                    Console.WriteLine("No Incidents");
+                    Console.WriteLine("Reseting List");
+                }
+                else
+                {
+                    displayIncidents(incidents);
+                }
+
+                Console.WriteLine();
+                Console.WriteLine();
+                //Filter by Date
+                if (option == 1)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("*  ");
+                    Console.Write("Open\n");
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.Write("   ");
+                    Console.Write("Open\n");
+                }
+                //Filter by Technician
+                if (option == 2)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("*  ");
+                    Console.Write("Accepted\n");
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.Write("   ");
+                    Console.Write("Accepted\n");
+                }
+                if(option == 3)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("*  ");
+                    Console.Write("Rejected\n");
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.Write("   ");
+                    Console.Write("Rejected\n");
+                }
+                //Filter by User
+                if (option == 4)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("*  ");
+                    Console.Write("Escalated\n");
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.Write("   ");
+                    Console.Write("Escalated\n");
+                }
+                if (option == 5)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("*  ");
+                    Console.Write("Closed\n");
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.Write("   ");
+                    Console.Write("Closed\n");
+                }
+                if (option == 6)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("*  ");
+                    Console.Write("Top menu\n");
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.Write("   ");
+                    Console.Write("Top menu\n");
+                }
+
+                switch (Console.ReadKey().Key)
+                {
+                    case ConsoleKey.UpArrow:
+
+                        if (option != 1)
+                        {
+                            option--;
+                        }
+                        Console.Clear();
+                        break;
+                    case ConsoleKey.DownArrow:
+                        if (option != 7)
+                        {
+                            option++;
+                        }
+                        Console.Clear();
+                        break;
+                    case ConsoleKey.Enter:
+                    case ConsoleKey.Spacebar:
+                        Console.Clear();
+                        //The options which allow the user to change/update their information
+                        switch (option)
+                        {
+                            //Update their First Name
+                            case 1:
+                                statusId = 0;
+                                showMenu = false;
+                                break;
+                            case 2:
+                                statusId = 1;
+                                showMenu = false;
+                                break;
+                            case 3:
+                                statusId = 2;
+                                showMenu = false;
+                                break;
+                            //Updating the cellphone number    
+                            case 4:
+                                statusId = 3;
+                                showMenu = false;
+                                break;
+                            case 5:
+                                statusId = 4;
+                                showMenu = false;
+                                break;
+                            case 6:
+                                Console.WriteLine("\nExiting...");
+                                showMenu = false;
+                                break;
+                        }
+                        //If the user wants to continue or proceed with other tasks
+                        break;
+                    default:
+                        Console.WriteLine("\nInvalid key, use Up/Down arrow to move, enter/spacebar to select");
+                        Console.WriteLine("Press any key to continue...");
+                        Console.ReadKey(true);
+                        break;
+                        
+                }
+
+            }
+            return statusId;
+        }
     }
-    
-    
-
-
 }
