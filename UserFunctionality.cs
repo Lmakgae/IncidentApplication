@@ -311,7 +311,7 @@ namespace IncidentApp
                                 {
                                     Console.Clear();
                                     Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine("\n last name is invalid!");
+                                    Console.WriteLine("\nLast name is invalid!");
                                     Console.ForegroundColor = ConsoleColor.White;
                                     Console.WriteLine("\nPlease enter a valid last name: ");
                                     lastName = Console.ReadLine();
@@ -349,7 +349,7 @@ namespace IncidentApp
                                 {
                                     Console.Clear();
                                     Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine("\n email is invalid!");
+                                    Console.WriteLine("\nEmail is invalid!");
                                     Console.ForegroundColor = ConsoleColor.White;
                                     Console.WriteLine("\nPlease enter a valid email: ");
                                     email = Console.ReadLine();

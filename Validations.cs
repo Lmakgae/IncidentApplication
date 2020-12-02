@@ -30,7 +30,7 @@ namespace IncidentApp
         }
         public static bool isValidInputLocString(string word)  //Check if user enters a valid string
         {
-            var input = new Regex(@"^[a-zA-Z0-9_\s]{3,250}$");
+            var input = new Regex(@"^[a-zA-Z0-9_\s]{3,255}$");
             try{
                  return input.IsMatch(word);
             }catch
