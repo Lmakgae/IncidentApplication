@@ -7,7 +7,30 @@ namespace IncidentApp
 
         public static bool isValidString(string word)  //Check if user enters a valid string
         {
-            var input = new Regex(@"^[a-zA-Z]+$");
+            var input = new Regex(@"^[a-zA-Z]{3,100}$");
+            try{
+                 return input.IsMatch(word);
+            }catch
+            {
+                return false;
+            }
+            
+        }
+
+        public static bool isValidInputString(string word)  //Check if user enters a valid string
+        {
+            var input = new Regex(@"^[a-zA-Z\s]{3,250}$");
+            try{
+                 return input.IsMatch(word);
+            }catch
+            {
+                return false;
+            }
+            
+        }
+        public static bool isValidInputLocString(string word)  //Check if user enters a valid string
+        {
+            var input = new Regex(@"^[a-zA-Z0-9_\s]{3,250}$");
             try{
                  return input.IsMatch(word);
             }catch

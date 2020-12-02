@@ -109,7 +109,7 @@ namespace IncidentApp
             Console.WriteLine("**********************************************\n");
             Console.WriteLine("Enter incident description: ");
             string incidentDescription = Console.ReadLine();
-            while(string.IsNullOrEmpty(incidentDescription) || string.IsNullOrWhiteSpace(incidentDescription)) {
+            while(string.IsNullOrEmpty(incidentDescription) || string.IsNullOrWhiteSpace(incidentDescription) || !Validators.isValidInputString(incidentDescription)) {
                 Console.WriteLine("Invalid! Please enter valid description: ");
                 incidentDescription = Console.ReadLine();
             }
@@ -118,7 +118,7 @@ namespace IncidentApp
             Console.WriteLine("Enter incident location: ");
             Console.WriteLine("i.e. Gijima Midrand, Gazelle Close, Floor 2, room: Siyabonga");
             string incidentLocation = Console.ReadLine();
-            while(string.IsNullOrEmpty(incidentLocation) || string.IsNullOrWhiteSpace(incidentLocation)) {
+            while(string.IsNullOrEmpty(incidentLocation) || string.IsNullOrWhiteSpace(incidentLocation)|| !Validators.isValidInputLocString(incidentDescription)) {
                 Console.WriteLine("Invalid! Please enter valid location: ");
                 Console.WriteLine("i.e. Gijima Midrand, Gazelle Close, Floor 2, room: Siyabonga");
                 incidentLocation = Console.ReadLine();
@@ -274,18 +274,28 @@ namespace IncidentApp
                                 Console.WriteLine("You are updating your first name: " + Authenticate.Instance.User.first_name);
                                 Console.WriteLine("\nPlease enter the first name you wish to replace it with");
                                 firstName = Console.ReadLine();
-                                while(string.IsNullOrEmpty(firstName) || string.IsNullOrWhiteSpace(firstName) || firstName == Authenticate.Instance.User.first_name ) 
+                                while(string.IsNullOrEmpty(firstName) || string.IsNullOrWhiteSpace(firstName) || !Validators.isValidString(firstName)) 
                                 {
                                     Console.Clear();
                                     Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine("\nFirst name already exists or input is invalid!");
+                                    Console.WriteLine("\n Firs name is invalid!");
                                     Console.ForegroundColor = ConsoleColor.White;
                                     Console.WriteLine("\nPlease enter a valid first name: ");
                                     firstName = Console.ReadLine();
                                 }
+                                //Checks if the first name of the user is the same as in the database
+                                while( firstName == Authenticate.Instance.User.first_name )
+                                {
+                                    Console.Clear();
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine("\nFirst name is already saved ");
+                                    Console.ForegroundColor = ConsoleColor.White;
+                                    Console.WriteLine("\nPlease enter a different first name: ");
+                                    firstName = Console.ReadLine();
+                                }
                                 Database.Instance.updateProfileField(firstName, UpdateProfileField.FirstName);
                                 Console.ForegroundColor = ConsoleColor.Green;
-                                Console.WriteLine("\nYour updated name is: " + firstName);
+                                Console.WriteLine("\nYour updated name is: " + Authenticate.Instance.User.first_name);
                                 Console.ForegroundColor = ConsoleColor.White;
                                 Console.WriteLine("**********************************************"); 
                                 Console.WriteLine("Press any key to continue...");
@@ -297,20 +307,30 @@ namespace IncidentApp
                                 Console.WriteLine("You are updating your last name: " + Authenticate.Instance.User.last_name);
                                 Console.WriteLine("\nPlease enter the name you wish to replace it with");
                                 lastName = Console.ReadLine();
-                                while(string.IsNullOrEmpty(lastName) || string.IsNullOrWhiteSpace(lastName) || lastName == Authenticate.Instance.User.last_name ) 
+                                while(string.IsNullOrEmpty(lastName) || string.IsNullOrWhiteSpace(lastName)  || !Validators.isValidString(firstName)  ) 
                                 {
                                     Console.Clear();
                                     Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine("\nLast name already exists or last name is invalid!");
+                                    Console.WriteLine("\n last name is invalid!");
                                     Console.ForegroundColor = ConsoleColor.White;
                                     Console.WriteLine("\nPlease enter a valid last name: ");
                                     lastName = Console.ReadLine();
                         
                                 }
+                                //Checks if the last name of the user is the same as in the database
+                                while(lastName == Authenticate.Instance.User.last_name)
+                                {
+                                    Console.Clear();
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine("\nLast name is already saved ");
+                                    Console.ForegroundColor = ConsoleColor.White;
+                                    Console.WriteLine("\nPlease enter a different last name: ");
+                                    lastName = Console.ReadLine();
+                                }
                                 
                                 Database.Instance.updateProfileField(lastName, UpdateProfileField.LastName);
                                 Console.ForegroundColor = ConsoleColor.Green;
-                                Console.WriteLine("\nYour updated last name is: " + lastName);
+                                Console.WriteLine("\nYour updated last name is: " + Authenticate.Instance.User.last_name);
                                 Console.ForegroundColor = ConsoleColor.White;
                                 Console.WriteLine("**********************************************");
                                 Console.WriteLine("Press any key to continue...");
@@ -325,23 +345,29 @@ namespace IncidentApp
 
                                 while(string.IsNullOrEmpty(email) || 
                                         string.IsNullOrWhiteSpace(email) || 
-                                        email == Authenticate.Instance.User.email ||
-                                        Database.Instance.EmailExists(email) ||
                                         !Validators.isValidEmail(email)) 
                                 {
                                     Console.Clear();
                                     Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine("\nEmail already exists or email is invalid!");
+                                    Console.WriteLine("\n email is invalid!");
                                     Console.ForegroundColor = ConsoleColor.White;
                                     Console.WriteLine("\nPlease enter a valid email: ");
                                     email = Console.ReadLine();
                         
                                 }
-                                
+                                while( Database.Instance.EmailExists(email))
+                                {
+                                    Console.Clear();
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine("\nEmail is already saved");
+                                    Console.ForegroundColor = ConsoleColor.White;
+                                    Console.WriteLine("\nPlease enter a different email: ");
+                                    email = Console.ReadLine();
+                                }
                                 Database.Instance.updateProfileField(email, UpdateProfileField.Email);
                             
                                 Console.ForegroundColor = ConsoleColor.Green;
-                                Console.WriteLine("\nYour updated last email is: " + email);
+                                Console.WriteLine("\nYour updated last email is: " + Authenticate.Instance.User.email);
                                 Console.ForegroundColor = ConsoleColor.White;
                                 Console.WriteLine("**********************************************");
                                 Console.WriteLine("Press any key to continue...");
@@ -353,7 +379,8 @@ namespace IncidentApp
                                 Console.WriteLine("You are updating your cell phone number to: " + Authenticate.Instance.User.cellphone_number);
                                 Console.WriteLine("\nPlease enter the cellphone number you wish to replace it with");
                                 cell = Console.ReadLine();
-                                while(Validators.isPhoneNumber(cell) != true)
+                                while(Validators.isPhoneNumber(cell) != true|| string.IsNullOrEmpty(cell) || 
+                                    string.IsNullOrWhiteSpace(cell) || !Validators.isPhoneNumber(cell) )
                                 {
                                     Console.Clear();
                                     Console.ForegroundColor = ConsoleColor.Red;
@@ -363,16 +390,13 @@ namespace IncidentApp
                                     cell = Console.ReadLine();
                                     
                                 }
-                                while(string.IsNullOrEmpty(cell) || 
-                                    string.IsNullOrWhiteSpace(cell) || 
-                                    cell == Authenticate.Instance.User.cellphone_number || 
-                                    !Validators.isPhoneNumber(cell) ) 
+                                while( cell == Authenticate.Instance.User.cellphone_number) 
                                 {
                                     Console.Clear();
                                     Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine("\nCellphone number already exists or Cellphone number is invalid!");
+                                    Console.WriteLine("\nCellphone number already exists");
                                     Console.ForegroundColor = ConsoleColor.White;
-                                    Console.WriteLine("\nPlease enter a valid Cellphone number: ");
+                                    Console.WriteLine("\nPlease enter a different Cellphone number: ");
                                     cell = Console.ReadLine();
                         
                                 }
@@ -397,7 +421,7 @@ namespace IncidentApp
                         Console.WriteLine("\nInvalid key, use Up/Down arrow to move, enter/spacebar to select");
                         Console.WriteLine("Press any key to continue...");
                         Console.ReadKey(true);
-                        break;    
+                        break;     
                 }
 
             }

@@ -26,7 +26,7 @@ namespace IncidentApp
         /// </summary>
         /// <returns>A formatted connection string</returns>
         private string connectionString() {
-            return string.Format("Host={0};Port={1};Username={2};Password={3};Database={4};", "localhost", "5432", "postgres", "admin", "IncidentDB");
+            return string.Format("host={0};port={1};database={2};username={3}; password={4};", "localhost", "5432", "IncidentDb", "postgres", "mary19991011-");
         }
 
         public User Login(String email, String password) {
@@ -366,8 +366,8 @@ namespace IncidentApp
                 }
 
                 return true;
-            } catch (Exception ex) {
-                Console.WriteLine("Failed to update user info: " + ex);
+            } catch (Exception) {
+                Console.WriteLine("Failed to update user info: " );
             }
             return false;
         }
