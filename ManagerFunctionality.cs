@@ -808,7 +808,16 @@ namespace IncidentApp
                     break;
                 case (int)IncidentStatus.Escalated:
                     status = "Escalated";
-                    break;    
+                    break;   
+                case (int)IncidentStatus.Accepted:
+                    status = "Accepted";
+                    break;
+                case (int)IncidentStatus.Rejected:
+                    status = "Rejected";
+                    break; 
+                case (int)IncidentStatus.Closed:
+                    status = "Closed";
+                    break; 
             }
 
             Console.WriteLine("Status : {0}", status);
@@ -1615,7 +1624,7 @@ namespace IncidentApp
                                     year1 = Console.ReadLine();
                                     try
                                     {
-                                        from = Convert.ToDateTime(year1);
+                                        from = Convert.ToDateTime(year1 + "00:00:00");
                                     }
                                     catch
                                     {
@@ -1631,7 +1640,7 @@ namespace IncidentApp
                                     year2 = Console.ReadLine();
                                     try
                                     {
-                                        to = Convert.ToDateTime(year2);
+                                        to = Convert.ToDateTime(year2 + "23:59:59");
                                     }
                                     catch
                                     {
