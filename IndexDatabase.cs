@@ -26,7 +26,7 @@ namespace IncidentApp
         /// </summary>
         /// <returns>A formatted connection string</returns>
         private string connectionString() {
-            return string.Format("host={0};port={1};database={2};username={3}; password={4};", "localhost", "5432", "IncidentDb", "postgres", "mary19991011-");
+            return string.Format("Host={0};Port={1};Username={2};Password={3};Database={4};", "localhost", "5432", "postgres", "@Kevin985", "IncidentDB");
         }
 
         public User Login(String email, String password) {
@@ -981,8 +981,124 @@ namespace IncidentApp
             return false;
         }
     
+        /// <summary>
+        /// This method queries the database to check if the incident is required to be escalated. 
+        /// If the incident status is still open after an hour or the incident status is rejected, the incident is escalated.
+        /// </summary>
+        /// <param name="incident_id">Incident ID for the queried incident</param>
+        public List<Incident> GetIncidentsOnYearMonth(DateTime from, DateTime to)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection(connectionString());
+            NpgsqlDataReader rdr = null;
+            List<Incident> list = new List<Incident>();
+
+            connection.Open();
+            try
+            {
+                NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM \"Incidents\" WHERE \"Incident_Date_Logged\" BETWEEN \'" + from + "\' AND \'" + to + "\'", connection);
+                rdr = command.ExecuteReader();
+
+
+                while (rdr.Read())
+                {
+                    if (rdr[6] == System.DBNull.Value)
+                    {
+                        User user = GetUserInfo((int)rdr[5]);
+
+                        list.Add(new Incident((int)rdr[0], (string)rdr[1], (string)rdr[2], (DateTime)rdr[3], (int)rdr[4], user, null));
+                    }
+                    else
+                    {
+
+                        User user = GetUserInfo((int)rdr[5]);
+                        User technician = GetUserInfo((int)rdr[6]);
+
+                        list.Add(new Incident((int)rdr[0], (string)rdr[1], (string)rdr[2], (DateTime)rdr[3], (int)rdr[4], user, technician));
+                    }
+                }
+
+                rdr.Close();
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine("Error retrieving data: " + e);
+            }
+
+            return list;
+        }
+
+        public List<User> GetAllTechnicians()
+        {
+            List<Incident> incidents = new List<Incident>();
+            List<User> technicians = new List<User>();
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString()))
+                {
+                    NpgsqlDataReader rdr = null;
+
+                    connection.Open();
+
+                    String SQLquery1 = "SELECT * FROM \"" + DatabaseNames.TABLE_USERS + "\" WHERE \"" +
+                                        DatabaseNames.USER_ROLE_ID + "\" = " + (int)UserRole.Technician;
+
+                    NpgsqlCommand command1 = new NpgsqlCommand(SQLquery1, connection);
+
+                    rdr = command1.ExecuteReader();
+
+                    while (rdr.Read())
+                    {
+                        technicians.Add(new User((int)rdr[0], (string)rdr[1], (string)rdr[2], (string)rdr[3], null, (string)rdr[5], (int)rdr[6]));
+                    }
+
+                    rdr.Close();
+
+                    foreach (var incident in incidents)
+                    {
+                        for (var i = 0; i < technicians.Count; i++)
+                        {
+                            if (incident.Technician.User_ID == technicians[i].User_ID)
+                            {
+                                technicians.RemoveAt(i);
+                                break;
+                            }
+                        }
+
+                    }
+
+                }
+
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error retrieving data: " + e);
+            }
+
+            return technicians;
+        }
         
-    
+        public void InsertIntoReportsTable(int report_request, string dateCons)
+        {
+            NpgsqlConnection connection = null;
+            //instantiate the connection
+            connection = new NpgsqlConnection(Database.Instance.connectionString());
+            //open connection
+            connection.Open();
+            //update report table
+            NpgsqlCommand cmd = new NpgsqlCommand("INSERT INTO \"Reports\" (\"Report_Request\", \"Report_Description\") VALUES ('" + report_request + "', '" + dateCons + "' )", connection);
+            cmd.ExecuteNonQuery();
+            connection.Close();
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Report Saved!");
+            Console.WriteLine();
+            Console.WriteLine("Thank you. Have a nice day!");
+            Console.ResetColor();
+            Console.WriteLine();
+            Console.ReadKey();
+        }
     }   
 
     /// <summary>

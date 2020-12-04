@@ -218,7 +218,6 @@ namespace IncidentApp {
         }
 
         public Boolean ForgotPassword() {
-           // string generatedOtp = "8976";
             string confirmNewPass;
             string password;
             string email;
@@ -226,35 +225,15 @@ namespace IncidentApp {
 
             Console.Write("Please enter your email address: ");
             email = Console.ReadLine();
-
-           //Check if the entered email address is valid and if it doesn't exist on the database
-           bool emailInvalid = true;
-
-            do {
-                bool valid = Validators.isValidEmail(email);
-                if (valid) {
-                    if (!Database.Instance.EmailExists(email)) {
-                        Console.Clear();
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("The email "+ email + " Does not exist");
-                        Console.ForegroundColor = ConsoleColor.White;
-                        Console.Write("Enter your Email Address: ");
-                        email = Console.ReadLine();
-                    } else {
-                        emailInvalid = false;
-                    }
-                } else {
-                    Console.Clear();
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Please enter a valid email address.");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.Write("Enter your Email Address: ");
-                    email = Console.ReadLine();
-                }
-                
-            } while(emailInvalid);
-
-            //End
+            while(!Validators.isValidEmail(email)) //Checking if the user Entered a valid email
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Enter a valid email address.");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write("\nEnter your Email Address: ");
+                email = Console.ReadLine();
+            }
 
             Console.Write("Please enter your contact details: ");
             cNo = Console.ReadLine();
