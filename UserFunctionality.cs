@@ -318,7 +318,7 @@ namespace IncidentApp
                                 }
                                 Database.Instance.updateProfileField(firstName, UpdateProfileField.FirstName);
                                 Console.ForegroundColor = ConsoleColor.Green;
-                                Console.WriteLine("\nYour updated name is: " + Authenticate.Instance.User.first_name);
+                                Console.WriteLine("\nYour updated first name is: " + Authenticate.Instance.User.first_name);
                                 Console.ForegroundColor = ConsoleColor.White;
                                 Console.WriteLine("**********************************************"); 
                                 Console.WriteLine("Your detail:\n");
@@ -407,7 +407,7 @@ namespace IncidentApp
                                 Database.Instance.updateProfileField(email, UpdateProfileField.Email);
                             
                                 Console.ForegroundColor = ConsoleColor.Green;
-                                Console.WriteLine("\nYour updated last email is: " + Authenticate.Instance.User.email);
+                                Console.WriteLine("\nYour updated email is: " + Authenticate.Instance.User.email);
                                 Console.ForegroundColor = ConsoleColor.White;
                                 Console.WriteLine("**********************************************");
                                 Console.WriteLine("Your detail:\n");
@@ -452,7 +452,7 @@ namespace IncidentApp
                                 Database.Instance.updateProfileField(cell, UpdateProfileField.ContactNo);
                                 
                                 Console.ForegroundColor = ConsoleColor.Green;
-                                Console.WriteLine("\nYour updated last cellphone number is: " + Authenticate.Instance.User.cellphone_number);
+                                Console.WriteLine("\nYour updated cellphone number is: " + Authenticate.Instance.User.cellphone_number);
                                 Console.ForegroundColor = ConsoleColor.White;
                                 Console.WriteLine("**********************************************");
                                 
