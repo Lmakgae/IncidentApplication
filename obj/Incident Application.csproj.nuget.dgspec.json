@@ -1,25 +1,21 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\User\\Downloads\\IncidentApplication\\Incident Application.csproj": {}
+    "C:\\Users\\User\\OneDrive\\Desktop\\Gijima\\Repo\\IncidentApplication\\Incident Application.csproj": {}
   },
   "projects": {
-    "C:\\Users\\User\\Downloads\\IncidentApplication\\Incident Application.csproj": {
+    "C:\\Users\\User\\OneDrive\\Desktop\\Gijima\\Repo\\IncidentApplication\\Incident Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\User\\Downloads\\IncidentApplication\\Incident Application.csproj",
+        "projectUniqueName": "C:\\Users\\User\\OneDrive\\Desktop\\Gijima\\Repo\\IncidentApplication\\Incident Application.csproj",
         "projectName": "Incident Application",
-        "projectPath": "C:\\Users\\User\\Downloads\\IncidentApplication\\Incident Application.csproj",
+        "projectPath": "C:\\Users\\User\\OneDrive\\Desktop\\Gijima\\Repo\\IncidentApplication\\Incident Application.csproj",
         "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\User\\Downloads\\IncidentApplication\\obj\\",
+        "outputPath": "C:\\Users\\User\\OneDrive\\Desktop\\Gijima\\Repo\\IncidentApplication\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\"
-        ],
         "configFilePaths": [
           "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"

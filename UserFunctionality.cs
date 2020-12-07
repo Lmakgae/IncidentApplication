@@ -102,7 +102,7 @@ namespace IncidentApp
             return showMenu;
         }
 
-        public static void LogIncident()//A method that allows the user to Report their incidents 
+        public static Boolean LogIncident()//A method that allows the user to Report their incidents 
         {   
             
             //The user is prompted to log the incident which requires them to enter the decrtion and the location of the incident
@@ -127,23 +127,46 @@ namespace IncidentApp
 
             //The input that will be saved in the database
             Incident incident = new Incident(0, incidentLocation, incidentDescription, date, 0, Authenticate.Instance.User, null);
+            if (saveOrCancelMenu(incident) > 0) {
+                if(Database.Instance.LogIncident(incident)) {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Incident Successfully\n");
+                    Console.ForegroundColor = ConsoleColor.White;
+                     Console.WriteLine("Press any key to continue...");
+                    Console.ReadKey(true);
+                    /// Set timer for escalation
+                    IncidentSystem.Instance.setTimerForEscalation(Database.Instance.GetIncidentID(incident), false);
+            
 
-            Console.Clear();
-            if (Database.Instance.LogIncident(incident)) {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Incident Successfully logged!");
-                Console.WriteLine("\nPress any key to continue...");
-                Console.ForegroundColor = ConsoleColor.White;
-
-                /// Set timer for escalation
-                IncidentSystem.Instance.setTimerForEscalation(Database.Instance.GetIncidentID(incident), false);
-            } else {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("An error has occured! Please contact administrator");
-                Console.WriteLine("\nPress any key to continue...");
-                Console.ForegroundColor = ConsoleColor.White;
+                }
             }
+                 else {
+                 Console.ForegroundColor = ConsoleColor.Red;
+                 Console.WriteLine("Incident cancelled\n");
+                 Console.ForegroundColor = ConsoleColor.White;
+                 Console.WriteLine("Press any key to continue...");
+                 Console.ReadKey(true);
+                    
+                } 
+
+            Console.WriteLine("Press any key to continue...");
+            Console.Clear();
+            // if (Database.Instance.LogIncident(incident)) {
+            //     Console.ForegroundColor = ConsoleColor.Green;
+            //     Console.WriteLine("Incident Successfully logged!");
+            //     Console.WriteLine("\nPress any key to continue...");
+            //     Console.ForegroundColor = ConsoleColor.White;
+
+            //     /// Set timer for escalation
+            //     IncidentSystem.Instance.setTimerForEscalation(Database.Instance.GetIncidentID(incident), false);
+            // } else {
+            //     Console.ForegroundColor = ConsoleColor.Red;
+            //     Console.WriteLine("An error has occured! Please contact administrator");
+            //     Console.WriteLine("\nPress any key to continue...");
+            //     Console.ForegroundColor = ConsoleColor.White;
+            // }
             Console.ReadKey(true);
+            return true;
         }
 
         public static void ViewStatus()//A method that allows the user to view all te incidents they logged
@@ -272,13 +295,13 @@ namespace IncidentApp
                             case 1:
                                 Console.WriteLine("**********************************************");
                                 Console.WriteLine("You are updating your first name: " + Authenticate.Instance.User.first_name);
-                                Console.WriteLine("\nPlease enter the first name you wish to replace it with");
+                                Console.WriteLine("\nEnter your first name");
                                 firstName = Console.ReadLine();
                                 while(string.IsNullOrEmpty(firstName) || string.IsNullOrWhiteSpace(firstName) || !Validators.isValidString(firstName)) 
                                 {
                                     Console.Clear();
                                     Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine("\n Firs name is invalid!");
+                                    Console.WriteLine("\n First name is invalid!");
                                     Console.ForegroundColor = ConsoleColor.White;
                                     Console.WriteLine("\nPlease enter a valid first name: ");
                                     firstName = Console.ReadLine();
@@ -298,6 +321,14 @@ namespace IncidentApp
                                 Console.WriteLine("\nYour updated name is: " + Authenticate.Instance.User.first_name);
                                 Console.ForegroundColor = ConsoleColor.White;
                                 Console.WriteLine("**********************************************"); 
+                                Console.WriteLine("Your detail:\n");
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine("First name: " + Authenticate.Instance.User.first_name);
+                                Console.ForegroundColor = ConsoleColor.White;
+                                Console.WriteLine("Last name: " + Authenticate.Instance.User.last_name);
+                                Console.WriteLine("Email address: " + Authenticate.Instance.User.email);
+                                Console.WriteLine("Email address: " + Authenticate.Instance.User.cellphone_number);
+                
                                 Console.WriteLine("Press any key to continue...");
                                 Console.ReadKey(true);
                                 break;
@@ -305,7 +336,7 @@ namespace IncidentApp
                             case 2:
                                 Console.WriteLine("**********************************************");
                                 Console.WriteLine("You are updating your last name: " + Authenticate.Instance.User.last_name);
-                                Console.WriteLine("\nPlease enter the name you wish to replace it with");
+                                Console.WriteLine("\nEnter your last name");
                                 lastName = Console.ReadLine();
                                 while(string.IsNullOrEmpty(lastName) || string.IsNullOrWhiteSpace(lastName)  || !Validators.isValidString(firstName)  ) 
                                 {
@@ -333,6 +364,15 @@ namespace IncidentApp
                                 Console.WriteLine("\nYour updated last name is: " + Authenticate.Instance.User.last_name);
                                 Console.ForegroundColor = ConsoleColor.White;
                                 Console.WriteLine("**********************************************");
+                                Console.WriteLine("Your detail\n");
+
+                                Console.WriteLine("First name: " + Authenticate.Instance.User.first_name);
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine("Last name: " + Authenticate.Instance.User.last_name);
+                                Console.ForegroundColor = ConsoleColor.White;
+                                Console.WriteLine("Email address: " + Authenticate.Instance.User.email);
+                                Console.WriteLine("Email address: " + Authenticate.Instance.User.cellphone_number);
+                
                                 Console.WriteLine("Press any key to continue...");
                                 Console.ReadKey(true);
                                 break;
@@ -340,7 +380,7 @@ namespace IncidentApp
                             case 3: 
                                 Console.WriteLine("**********************************************");
                                 Console.WriteLine("You are updating your email: " + Authenticate.Instance.User.email);
-                                Console.WriteLine("\nPlease enter the email you wish to replace it with");
+                                Console.WriteLine("\nEnter your email: ");
                                 email = Console.ReadLine();
 
                                 while(string.IsNullOrEmpty(email) || 
@@ -370,6 +410,14 @@ namespace IncidentApp
                                 Console.WriteLine("\nYour updated last email is: " + Authenticate.Instance.User.email);
                                 Console.ForegroundColor = ConsoleColor.White;
                                 Console.WriteLine("**********************************************");
+                                Console.WriteLine("Your detail:\n");
+                                Console.WriteLine("First name: " + Authenticate.Instance.User.first_name);
+                                Console.WriteLine("Last name: " + Authenticate.Instance.User.last_name);
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine("Email address: " + Authenticate.Instance.User.email);
+                                Console.ForegroundColor = ConsoleColor.White;
+                                Console.WriteLine("Email address: " + Authenticate.Instance.User.cellphone_number);
+                
                                 Console.WriteLine("Press any key to continue...");
                                 Console.ReadKey(true);
                                 break;
@@ -377,7 +425,7 @@ namespace IncidentApp
                             case 4: 
                                 Console.WriteLine("**********************************************");
                                 Console.WriteLine("You are updating your cell phone number to: " + Authenticate.Instance.User.cellphone_number);
-                                Console.WriteLine("\nPlease enter the cellphone number you wish to replace it with");
+                                Console.WriteLine("\nEnter your cellphone number: ");
                                 cell = Console.ReadLine();
                                 while(Validators.isPhoneNumber(cell) != true|| string.IsNullOrEmpty(cell) || 
                                     string.IsNullOrWhiteSpace(cell) || !Validators.isPhoneNumber(cell) )
@@ -407,6 +455,14 @@ namespace IncidentApp
                                 Console.WriteLine("\nYour updated last cellphone number is: " + Authenticate.Instance.User.cellphone_number);
                                 Console.ForegroundColor = ConsoleColor.White;
                                 Console.WriteLine("**********************************************");
+                                
+                                Console.WriteLine("Your detail:\n");
+                                Console.WriteLine("First name: " + Authenticate.Instance.User.first_name);
+                                Console.WriteLine("Last name: " + Authenticate.Instance.User.last_name);
+                                Console.WriteLine("Email address: " + Authenticate.Instance.User.email);
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine("Email address: " + Authenticate.Instance.User.cellphone_number);
+                                Console.ForegroundColor = ConsoleColor.White;
                                 Console.WriteLine("Press any key to continue...");
                                 Console.ReadKey(true);
                                 break;                    
@@ -427,6 +483,74 @@ namespace IncidentApp
             }
         
         }
+
+        private static int saveOrCancelMenu(Incident incident) {
+            Console.Clear();
+            bool showMenu = true;
+            int option = 1;
+            while(showMenu) {
+                Console.WriteLine("Confirm incident details:\n");
+                Console.WriteLine("Incident description: " + incident.Description);
+                Console.WriteLine("Incident Location: " + incident.Location);
+                Console.WriteLine("\nUse Up arrow and Down arrow to move, enter/spacebar to select");
+                if(option == 1) {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("*  ");
+                    Console.Write("Confirm incident\n");
+                    Console.ResetColor();
+                } else {
+                    Console.Write("   ");
+                    Console.Write("Confirm incident\n");
+                }
+                if(option == 2) {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("*  ");
+                    Console.Write("Cancel incident\n");
+                    Console.ResetColor();
+                } else {
+                    Console.Write("   ");
+                    Console.Write("Cancel incident\n");
+                }
+                
+                switch(Console.ReadKey().Key) {
+                    case ConsoleKey.UpArrow:
+                    
+                        if (option != 1) {
+                            option--;
+                        }
+                        Console.Clear();
+                        break;
+                    case ConsoleKey.DownArrow:
+                        if (option != 2) {
+                            option++;
+                        }
+                        Console.Clear();
+                        break;
+                    case ConsoleKey.Enter:
+                    case ConsoleKey.Spacebar:
+                        Console.Clear();
+                        switch(option) {
+                            case 1:
+                            Console.WriteLine("Successful");
+                                return 1;
+                            case 2: 
+                            Console.WriteLine("Cancelled");
+                                showMenu = false;
+                                return -1;            
+                        }
+                        break;
+                    default:
+                        Console.WriteLine("\nInvalid key, use Up/Down arrow to move, enter/spacebar to select");
+                        Console.WriteLine("Press any key to continue...");
+                        Console.ReadKey(true);
+                        break;    
+                }
+
+            }
+            return -1;
+        }
+
+
 
     }
 }
