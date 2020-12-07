@@ -531,10 +531,8 @@ namespace IncidentApp
                         Console.Clear();
                         switch(option) {
                             case 1:
-                            Console.WriteLine("Successful");
                                 return 1;
                             case 2: 
-                            Console.WriteLine("Cancelled");
                                 showMenu = false;
                                 return -1;            
                         }
